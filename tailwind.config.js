@@ -31,6 +31,7 @@ export default {
         "border-line": "rgba(0, 0, 0, 0.4)",
         inputBg: "#F5F5F5",
         borderColor: "#E7E6EC",
+        navIconBg: "#FAF6FE",
       },
       fontFamily: {
         inter: '"Inter", sans-serif',
