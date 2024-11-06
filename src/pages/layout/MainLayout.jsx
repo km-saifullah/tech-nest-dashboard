@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
 const MainLayout = () => {
+  const [isOpen, setIsOpen] = useState(true);
   return (
     <>
       <main>
         <section className="container">
           <div className="flex gap-x-2">
-            <div>
-              <Sidebar />
-            </div>
+            {isOpen && (
+              <div>
+                <Sidebar />
+              </div>
+            )}
             <div className="w-full">
-              <Navbar />
+              <Navbar setIsOpen={setIsOpen} isOpen={isOpen} />
               <Outlet />
             </div>
           </div>

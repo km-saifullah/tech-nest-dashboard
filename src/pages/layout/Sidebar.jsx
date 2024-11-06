@@ -8,6 +8,7 @@ import { MdOutlineInventory2 } from "react-icons/md";
 import { TbCategory2 } from "react-icons/tb";
 import { MdOutlineCategory } from "react-icons/md";
 import { IoSettingsSharp } from "react-icons/io5";
+import { CiShop } from "react-icons/ci";
 import SideLink from "../../components/SideLink";
 
 const Sidebar = () => {
@@ -36,7 +37,7 @@ const Sidebar = () => {
           path="/sub-category"
           title="Sub Category"
         />
-        <SideLink icon={AiOutlineProduct} path="/products" title="Products" />
+        <SideLink icon={CiShop} path="/products" title="Products" />
         <SideLink
           icon={MdOutlineInventory2}
           path="/inventories"

@@ -5,11 +5,14 @@ import { IoIosArrowForward, IoMdNotificationsOutline } from "react-icons/io";
 import Image from "../../components/Image";
 import avatar from "/vite.svg";
 
-const Navbar = () => {
+const Navbar = ({ setIsOpen, isOpen }) => {
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
   return (
-    <nav className="p-4 flex items-center justify-between">
+    <nav className="py-4 flex items-center justify-between">
       <section className="flex items-center gap-x-7">
-        <div>
+        <div onClick={toggleSidebar}>
           <HiOutlineBars3CenterLeft className="w-[35px] h-[35px] text-primary cursor-pointer" />
         </div>
         <div className="flex items-center justify-between w-[300px] h-[52px] rounded-lg border border-borderColor p-4">
