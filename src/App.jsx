@@ -10,6 +10,7 @@ import Signup from "./pages/signup/Signup";
 import Login from "./pages/login/Login";
 import MainLayout from "./pages/layout/MainLayout";
 import Users from "./pages/users/Users";
+import NotFound from "./pages/notfound/NotFound";
 
 // / All Routes
 const router = createBrowserRouter(
@@ -22,6 +23,9 @@ const router = createBrowserRouter(
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/users" element={<Users />} />
+      </Route>
+      <Route>
+        <Route path="*" element={<NotFound />} />
       </Route>
     </>
   )
