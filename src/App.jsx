@@ -11,6 +11,7 @@ import Login from "./pages/login/Login";
 import MainLayout from "./pages/layout/MainLayout";
 import Users from "./pages/users/Users";
 import NotFound from "./pages/notfound/NotFound";
+import Variation from "./pages/variation/Variation";
 
 // / All Routes
 const router = createBrowserRouter(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/product-variations" element={<Variation />} />
       </Route>
       <Route>
         <Route path="*" element={<NotFound />} />
