@@ -1,10 +1,18 @@
-import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import Cookies from "js-cookie";
 
 const MainLayout = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!Cookies.get("accessToken")) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <>
       <main>

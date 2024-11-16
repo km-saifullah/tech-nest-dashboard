@@ -1,31 +1,103 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { baseUrl } from "../../config/config";
+import { toast, ToastContainer } from "react-toastify";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [loginFields, setLoginFields] = useState({
     email: "",
     password: "",
   });
+  const [isLoading, setIsLodaing] = useState(false);
+  const navigate = useNavigate();
+
+  // restrict to visit login page after login
+  useEffect(() => {
+    if (Cookies.get("accessToken")) {
+      navigate("/");
+    }
+  }, []);
 
   // handle input fileds
   const handleLoginInput = (e) => {
     const loginInfo = { ...loginFields };
     loginInfo[e.target.name] = e.target.value;
     setLoginFields(loginInfo);
-    e.preventDefault();
   };
 
-  // handle sign up
-  const handleSignUp = (e) => {
-    console.log(loginFields);
+  // handle sign in
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      setIsLodaing(true);
+      const { email, password } = loginFields;
+      if (!email || !password) {
+        setIsLodaing(false);
+        toast.warn("Please fill in all required fields!", {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
+        return;
+      }
+      const res = await axios.post(`${baseUrl}/users/login`, loginFields);
+      if (res.data.statusCode === 200 && res.data.data.user.role === "admin") {
+        Cookies.set("accessToken", res.data.data.token.accessToken, {
+          expires: 1,
+        });
+        toast.success("Sign In successful!", {
+          position: "top-right",
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 1200);
+      } else {
+        toast.error("You do not have permission to login", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
+      } else {
+        toast.error("Something went wrong!");
+      }
+    }
+    setIsLodaing(false);
     setLoginFields({
       email: "",
       password: "",
     });
-    e.preventDefault();
   };
   return (
     <main>
+      <ToastContainer />
       <section className="container">
         <section className="w-full h-[100vh] flex items-center justify-center">
           <section className="w-[560px] h-[560px] py-12 px-7 rounded shadow-md">
