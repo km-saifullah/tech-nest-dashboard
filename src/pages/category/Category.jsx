@@ -1,11 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import {
+  useCreateCategoryMutation,
+  useGetCategoriesQuery,
+} from "../../redux/apiSlice";
 
 const Category = () => {
   const [categoryInput, setCategoryInput] = useState({
     categoryName: "",
     slug: "",
   });
+
+  const [createCategory, { data, isSuccess, isLoading, isError, error }] =
+    useCreateCategoryMutation();
+
+  const { data: categoryData, isLoading: isCategoryLoad } =
+    useGetCategoriesQuery();
 
   //   handle category input fields
   const handleCategoryInput = (e) => {
@@ -15,11 +25,16 @@ const Category = () => {
   };
 
   // handle create category
-  const handleCreateCategory = (e) => {
-    e.preventDefault();
+  const handleCreateCategory = async (e) => {
+    try {
+      e.preventDefault();
 
-    if (categoryInput.categoryName === "") {
-      alert("Category Name is Required");
+      if (categoryInput.categoryName === "") {
+        alert("Category Name is Required");
+      }
+      await createCategory(categoryInput);
+    } catch (error) {
+      console.log(error.message);
     }
 
     setCategoryInput({
@@ -27,6 +42,8 @@ const Category = () => {
       slug: "",
     });
   };
+
+  // useEffect(() => {}, [categoryData, isCategoryLoad]);
 
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
@@ -107,6 +124,33 @@ const Category = () => {
             </div>
           </div>
         </form>
+      </section>
+      <section className="bg-white mt-5 p-4 rounded-lg">
+        <h2 className="text-heading font-bold font-inter text-xl pb-3">
+          All Categories
+        </h2>
+        <ul className="w-full flex flex-col gap-y-4">
+          {!isCategoryLoad &&
+            categoryData?.data.data.map((category, index) => (
+              <div
+                key={category.slug}
+                className="w-full flex items-center justify-between text-center gap-x-2"
+              >
+                <li className="flex-1 text-base text-primary font-normal font-inter">
+                  {index + 1}
+                </li>
+                <li className="flex-1 text-base text-primary font-normal font-inter capitalize">
+                  {category.categoryName}
+                </li>
+                <button className="flex-1 py-2 px-4 bg-orange-400 text-white rounded hover:bg-orange-600">
+                  Update
+                </button>
+                <button className="flex-1 py-2 px-4 bg-red-400 text-white rounded hover:bg-red-600">
+                  Delete
+                </button>
+              </div>
+            ))}
+        </ul>
       </section>
     </main>
   );
