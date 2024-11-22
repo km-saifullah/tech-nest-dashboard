@@ -25,7 +25,31 @@ export const ecommerce = createApi({
       }),
       invalidatesTags: ["Category"],
     }),
+
+    // user apis
+    getProfile: builder.query({
+      query: (id) => `/users/${id}`,
+    }),
+    updateProfile: builder.mutation({
+      query: (data) => {
+        const formData = new FormData();
+        formData.append("profileImage", data);
+        return {
+          url: "/users/update-user",
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: Cookies.get("accessToken"),
+          },
+        };
+      },
+    }),
   }),
 });
 
-export const { useCreateCategoryMutation, useGetCategoriesQuery } = ecommerce;
+export const {
+  useCreateCategoryMutation,
+  useGetCategoriesQuery,
+  useUpdateProfileMutation,
+  useGetProfileQuery,
+} = ecommerce;
