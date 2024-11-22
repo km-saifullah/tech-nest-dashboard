@@ -3,16 +3,23 @@ import { IoSearchOutline } from "react-icons/io5";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoIosArrowForward, IoMdNotificationsOutline } from "react-icons/io";
 import Image from "../../components/Image";
-import avatar from "/vite.svg";
+import avatar from "/avatar.svg";
 import axios from "axios";
 import { baseUrl } from "../../config/config";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useState } from "react";
+import Modal from "../../components/Modal";
 
 const Navbar = ({ setIsOpen, isOpen }) => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const toggleDropdown = () => {
+    setIsDropdownVisible((prev) => !prev);
   };
 
   const navigate = useNavigate();
@@ -60,9 +67,27 @@ const Navbar = ({ setIsOpen, isOpen }) => {
         <div className="h-[50px] w-[50px] bg-navIconBg rounded-full flex items-center justify-center p-3 cursor-pointer">
           <IoMdNotificationsOutline className="text-primary text-2xl" />
         </div>
-        <div className="h-[50px] w-[50px] bg-navIconBg rounded-full flex items-center justify-center p-3 cursor-pointer">
-          <Image imgSrc={avatar} imgAlt="avatar image not found" />
+        <div
+          className="relative h-[50px] w-[50px] bg-navIconBg rounded-full flex items-center justify-center p-3 cursor-pointer group"
+          onClick={toggleDropdown}
+        >
+          <Image
+            imgSrc={auth?.profileImage || avatar}
+            imgAlt="avatar image not found"
+          />
+          {isDropdownVisible && (
+            <div className="absolute top-14 left-0 w-[120px] bg-navIconBg p-3 rounded-md shadow-md">
+              <ul>
+                <li>
+                  <Link to="/profile" className="cursor-pointer">
+                    See Profile
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
+
         <div className="flex items-center justify-between gap-x-3">
           <h4 className="text-primary text-base font-inter font-medium">
             {auth.fullName}
