@@ -8,6 +8,7 @@ import axios from "axios";
 import { baseUrl } from "../../config/config";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Navbar = ({ setIsOpen, isOpen }) => {
   const toggleSidebar = () => {
@@ -15,6 +16,7 @@ const Navbar = ({ setIsOpen, isOpen }) => {
   };
 
   const navigate = useNavigate();
+  const auth = useSelector((state) => state.authSlice.user);
 
   // handle logout
   const handleLogout = async (e) => {
@@ -62,7 +64,9 @@ const Navbar = ({ setIsOpen, isOpen }) => {
           <Image imgSrc={avatar} imgAlt="avatar image not found" />
         </div>
         <div className="flex items-center justify-between gap-x-3">
-          <h4>John Doe</h4>
+          <h4 className="text-primary text-base font-inter font-medium">
+            {auth.fullName}
+          </h4>
           {/* <IoIosArrowForward className="text-primary group-hover:text-white text-2xl cursor-pointer" /> */}
           <button
             className="bg-secondary px-4 py-2 text-white rounded-lg"

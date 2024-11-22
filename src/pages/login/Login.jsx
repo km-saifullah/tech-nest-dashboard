@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { baseUrl } from "../../config/config";
 import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuth } from "../../redux/authSlice";
 
 const Login = () => {
   const [loginFields, setLoginFields] = useState({
@@ -12,6 +14,7 @@ const Login = () => {
   });
   const [isLoading, setIsLodaing] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // restrict to visit login page after login
   useEffect(() => {
@@ -51,6 +54,7 @@ const Login = () => {
         Cookies.set("accessToken", res.data.data.token.accessToken, {
           expires: 1,
         });
+        dispatch(setAuth(res.data.data.user));
         toast.success("Sign In successful!", {
           position: "top-right",
           autoClose: 1000,

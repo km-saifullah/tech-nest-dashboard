@@ -84,6 +84,9 @@ const Category = () => {
         </ul>
       </section>
       <section className="bg-white mt-6 p-5 rounded">
+        <h2 className="text-heading font-bold font-inter text-xl pb-3">
+          Add Category
+        </h2>
         <form action="">
           <div className="flex items-center justify-between">
             <div className="flex flex-col space-y-3">

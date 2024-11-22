@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaUsers } from "react-icons/fa";
-import { AiOutlineProduct } from "react-icons/ai";
+import { IoIosHome } from "react-icons/io";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import { FaCartPlus } from "react-icons/fa";
 import { MdOutlineInventory2 } from "react-icons/md";
@@ -25,6 +25,7 @@ const Sidebar = () => {
             Admin Panel
           </p>
         </section>
+        <SideLink icon={IoIosHome} path="/" title="Home" />
         <SideLink icon={FaUsers} path="/users" title="Users" />
         <SideLink
           icon={GiPerspectiveDiceSixFacesRandom}
