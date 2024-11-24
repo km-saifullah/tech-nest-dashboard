@@ -4,6 +4,7 @@ import {
   useCreateCategoryMutation,
   useGetCategoriesQuery,
 } from "../../redux/apiSlice";
+import { toast, ToastContainer } from "react-toastify";
 
 const Category = () => {
   const [categoryInput, setCategoryInput] = useState({
@@ -28,11 +29,28 @@ const Category = () => {
   const handleCreateCategory = async (e) => {
     try {
       e.preventDefault();
-
       if (categoryInput.categoryName === "") {
-        alert("Category Name is Required");
+        toast.warn("Please enter the ccategory name", {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
+      } else {
+        await createCategory(categoryInput);
+        toast.success("Category Created", {
+          position: "top-right",
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
       }
-      await createCategory(categoryInput);
     } catch (error) {
       console.log(error.message);
     }
@@ -48,6 +66,7 @@ const Category = () => {
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
       <section className="space-y-3">
+        <ToastContainer />
         <h3 className="text-2xl text-primary font-semibold font-inter ">
           Category
         </h3>

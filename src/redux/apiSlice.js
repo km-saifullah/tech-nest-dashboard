@@ -7,7 +7,7 @@ export const ecommerce = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: baseUrl,
   }),
-  tagTypes: ["Category"],
+  tagTypes: ["Category", "ProfilePhoto"],
   // categories api
   endpoints: (builder) => ({
     getCategories: builder.query({
@@ -29,6 +29,7 @@ export const ecommerce = createApi({
     // user apis
     getProfile: builder.query({
       query: (id) => `/users/${id}`,
+      providesTags: ["ProfilePhoto"],
     }),
     updateProfile: builder.mutation({
       query: (data) => {
@@ -44,6 +45,7 @@ export const ecommerce = createApi({
         };
       },
     }),
+    invalidatesTags: ["ProfilePhoto"],
   }),
 });
 

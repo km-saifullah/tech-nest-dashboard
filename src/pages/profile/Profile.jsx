@@ -14,6 +14,7 @@ const Profile = () => {
     useUpdateProfileMutation();
 
   const [profileImage, setProfileImage] = useState(null);
+
   // handle update user profile image
   const handleUpdateAvatar = async () => {
     if (!profileImage) {
@@ -29,19 +30,21 @@ const Profile = () => {
       return;
     }
 
-    // const formData = new FormData();
-    // formData.append("profileImage", profileImage);
+    const formData = new FormData();
+    formData.append("profileImage", profileImage);
     try {
       await updateProfile(profileImage);
-      // setProfileImage(null);
+      toast.success("Profile updated successfully!", {
+        position: "top-right",
+        autoClose: 2500,
+        closeOnClick: true,
+        theme: "dark",
+      });
+      setProfileImage(null);
     } catch (error) {
       console.log(error.message);
     }
   };
-
-  useEffect(() => {
-    console.log(isLoading, error, data);
-  }, [isLoading, error, data]);
 
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
@@ -84,17 +87,18 @@ const Profile = () => {
       </section>
       <section className="flex items-center justify-between gap-x-4">
         <section className="space-y-3 w-[50%] flex items-center justify-center flex-col">
-          <div className="w-[400px] h-[400px] text-center rounded-full">
-            <Image
-              imgSrc={auth?.profileImage || avatar}
-              imgAlt="Not found"
-              className="w-full h-full object-contain object-center"
+          <div className="w-[400px] h-[400px] rounded-full bg-gray-200 flex justify-center items-center">
+            <img
+              src={auth?.profileImage || avatar}
+              alt="Not found"
+              className="w-[200px] h-[200px] rounded-full object-cover"
             />
           </div>
           <div className="w-full flex items-center justify-between">
             <div className="flex flex-col items-center font-sans">
               <label className="flex items-center gap-3 px-6 py-2 border-2 border-primary rounded-lg cursor-pointer text-heading hover:bg-indigo-50 transition-all">
                 <GrUploadOption />
+                <p>upload avatar</p>
                 <input
                   type="file"
                   name="profileImage"
@@ -110,7 +114,7 @@ const Profile = () => {
                 className="p-3 bg-secondary hover:bg-primary text-white w-full rounded-lg font-inter font-normal text-base hover:transition-all hover:duration-500 hover:ease-in-out"
                 onClick={handleUpdateAvatar}
               >
-                Update Avatar
+                {isLoading ? "Uploading..." : "Update Avatar"}
               </button>
             </div>
           </div>
@@ -157,7 +161,7 @@ const Profile = () => {
           </div>
           <div>
             <button className="p-3 bg-secondary hover:bg-primary text-white w-full rounded-lg font-inter font-normal text-base hover:transition-all hover:duration-500 hover:ease-in-out">
-              {isLoading ? "Uploading..." : "Update Avatar"}
+              Update Profile
             </button>
           </div>
         </section>

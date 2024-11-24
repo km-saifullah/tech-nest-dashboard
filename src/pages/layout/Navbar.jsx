@@ -1,7 +1,7 @@
 import { HiOutlineBars3CenterLeft } from "react-icons/hi2";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoSettingsOutline } from "react-icons/io5";
-import { IoIosArrowForward, IoMdNotificationsOutline } from "react-icons/io";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import Image from "../../components/Image";
 import avatar from "/avatar.svg";
 import axios from "axios";
@@ -10,7 +10,6 @@ import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import Modal from "../../components/Modal";
 
 const Navbar = ({ setIsOpen, isOpen }) => {
   const toggleSidebar = () => {
@@ -72,7 +71,7 @@ const Navbar = ({ setIsOpen, isOpen }) => {
           onClick={toggleDropdown}
         >
           <Image
-            imgSrc={auth?.profileImage || avatar}
+            imgSrc={auth.profileImage || avatar}
             imgAlt="avatar image not found"
           />
           {isDropdownVisible && (
@@ -90,7 +89,7 @@ const Navbar = ({ setIsOpen, isOpen }) => {
 
         <div className="flex items-center justify-between gap-x-3">
           <h4 className="text-primary text-base font-inter font-medium">
-            {auth.fullName}
+            {auth?.fullName}
           </h4>
           {/* <IoIosArrowForward className="text-primary group-hover:text-white text-2xl cursor-pointer" /> */}
           <button

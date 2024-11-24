@@ -5,7 +5,7 @@ import { baseUrl } from "../../config/config";
 import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { setAuth } from "../../redux/authSlice";
+import { setAuth, setId } from "../../redux/authSlice";
 
 const Login = () => {
   const [loginFields, setLoginFields] = useState({
@@ -50,11 +50,12 @@ const Login = () => {
         return;
       }
       const res = await axios.post(`${baseUrl}/users/login`, loginFields);
+      console.log(res);
       if (res.data.statusCode === 200 && res.data.data.user.role === "admin") {
         Cookies.set("accessToken", res.data.data.token.accessToken, {
           expires: 1,
         });
-        dispatch(setAuth(res.data.data.user));
+        dispatch(setId(res.data.data.user._id));
         toast.success("Sign In successful!", {
           position: "top-right",
           autoClose: 1000,
