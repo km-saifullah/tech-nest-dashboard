@@ -1,25 +1,23 @@
+import { useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { Link, useNavigate } from "react-router-dom";
 import { HiOutlineBars3CenterLeft } from "react-icons/hi2";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import Image from "../../components/Image";
 import avatar from "/avatar.svg";
-import axios from "axios";
 import { baseUrl } from "../../config/config";
-import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 const Navbar = ({ setIsOpen, isOpen }) => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const toggleDropdown = () => {
     setIsDropdownVisible((prev) => !prev);
   };
-
   const navigate = useNavigate();
 
   // handle logout
@@ -35,8 +33,8 @@ const Navbar = ({ setIsOpen, isOpen }) => {
           },
         }
       );
-
       if (res.data.statusCode === 200) {
+        Cookies.remove("accessToken");
         navigate("/login");
       }
     } catch (error) {}
