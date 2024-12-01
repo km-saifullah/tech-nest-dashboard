@@ -3,67 +3,47 @@ import { NavLink } from "react-router-dom";
 import avatar from "/avatar.svg";
 import { GrUploadOption } from "react-icons/gr";
 import { toast, ToastContainer } from "react-toastify";
+import { useUpdateProfileMutation } from "../../redux/apiSlice";
 
 const Profile = () => {
   const [isLoading, setIsLodaing] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
+
+  const [updateProfile, { isLoading: profileLoading, data: profileData }] =
+    useUpdateProfileMutation();
 
   // handle update user profile image
   const handleUpdateAvatar = async () => {
     if (!profileImage) {
-      toast.warn("No files sected", {
+      toast.warn("Please select a profile image first!", {
         position: "top-right",
         autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
         theme: "dark",
       });
       return;
     }
-
+    const formData = new FormData();
+    formData.append("profileImage", profileImage);
     try {
-      // const response = await updateProfile(formData);
-
-      // // Update Redux state and localStorage
-      // const updatedUser = { ...auth, profileImage: response.data.profileImage };
-      // dispatch(setAuth(updatedUser));
-
-      // // await updateProfile(profileImage);
-      // toast.success("Profile updated successfully!", {
-      //   position: "top-right",
-      //   autoClose: 2500,
-      //   closeOnClick: true,
-      //   theme: "dark",
-      // });
-      // setProfileImage(null);
-      // Call the API to upload the image
-      const formData = new FormData();
-      formData.append("profileImage", profileImage);
-      // const response = await updateProfile(formData);
-
-      if (response.status === 200) {
-        toast.success("Profile updated successfully!", {
-          position: "top-right",
-          autoClose: 2500,
-          closeOnClick: true,
-          theme: "dark",
-        });
-
-        // Clear the input field after successful upload
-        // setProfileImage(null);
-      } else {
-        toast.error("Failed to update profile image. Please try again.", {
-          position: "top-right",
-          autoClose: 2000,
-          closeOnClick: true,
-          theme: "dark",
-        });
-      }
+      const response = await updateProfile(formData).unwrap();
+      toast.success("Profile image updated!", {
+        position: "top-right",
+        autoClose: 2000,
+        theme: "dark",
+      });
     } catch (error) {
-      console.log(error.message);
+      toast.error(error.data?.message || "Failed to update profile", {
+        position: "top-right",
+        autoClose: 2500,
+        theme: "dark",
+      });
     }
+    setProfileImage(null);
   };
+
+  // useEffect(() => {
+  //   console.log(profileLoading, profileData);
+  // }, [profileLoading, profileData]);
 
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
@@ -120,20 +100,19 @@ const Profile = () => {
                 <p>upload avatar</p>
                 <input
                   type="file"
-                  name="profileImage"
                   accept="image/*"
                   onChange={(e) => setProfileImage(e.target.files[0])}
                   className="hidden"
                 />
               </label>
-              {/* {profileImage && <p>{profileImage.name}</p>} */}
+              {profileImage && <p>{profileImage.name}</p>}
             </div>
             <div>
               <button
-                className="p-3 bg-secondary hover:bg-primary text-white w-full rounded-lg font-inter font-normal text-base hover:transition-all hover:duration-500 hover:ease-in-out"
+                className="p-3 bg-secondary hover:bg-primary text-white w-full rounded-xl font-inter font-normal text-base hover:transition-all hover:duration-500 hover:ease-in-out"
                 onClick={handleUpdateAvatar}
               >
-                {isLoading ? "Uploading..." : "Update Avatar"}
+                {profileLoading ? "Uploading..." : "Update Avatar"}
               </button>
             </div>
           </div>

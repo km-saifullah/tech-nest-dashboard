@@ -13,10 +13,10 @@ export const ecommerce = createApi({
     }),
 
     updateProfile: builder.mutation({
-      query: (data) => ({
+      query: (formData) => ({
         url: "/users/update-user",
         method: "POST",
-        body: data,
+        body: formData,
         headers: {
           Authorization: Cookies.get("accessToken"),
         },
