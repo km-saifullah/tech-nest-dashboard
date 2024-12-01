@@ -37,6 +37,8 @@ const Navbar = ({ setIsOpen, isOpen }) => {
       );
       if (res.data.statusCode === 200) {
         Cookies.remove("accessToken");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("user");
         navigate("/login");
       }
     } catch (error) {}
@@ -90,7 +92,7 @@ const Navbar = ({ setIsOpen, isOpen }) => {
           </h4>
           {/* <IoIosArrowForward className="text-primary group-hover:text-white text-2xl cursor-pointer" /> */}
           <button
-            className="bg-secondary px-4 py-2 text-white rounded-lg hover:transition-all hover:duration-300 hover:ease-linear hover:bg-primary"
+            className="bg-secondary px-4 py-2 text-white rounded-full hover:transition-all hover:duration-300 hover:ease-linear hover:bg-primary"
             onClick={handleLogout}
           >
             Logout

@@ -5,8 +5,8 @@ import Cookies from "js-cookie";
 import { ThreeDots } from "react-loader-spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { baseUrl } from "../../config/config";
+import { setId } from "../../redux/authSlice";
 import { useDispatch } from "react-redux";
-import { setAuth } from "../../redux/authSlice";
 
 const Login = () => {
   const [loginFields, setLoginFields] = useState({
@@ -55,7 +55,7 @@ const Login = () => {
         Cookies.set("accessToken", res.data.data.token.accessToken, {
           expires: 7,
         });
-        dispatch(setAuth(res.data.data.user));
+        dispatch(setId(res.data.data.user._id));
         toast.success("Sign In Successful!", {
           position: "top-right",
           autoClose: 1000,

@@ -3,11 +3,20 @@ import { NavLink } from "react-router-dom";
 import avatar from "/avatar.svg";
 import { GrUploadOption } from "react-icons/gr";
 import { toast, ToastContainer } from "react-toastify";
-import { useUpdateProfileMutation } from "../../redux/apiSlice";
+import {
+  useGetUserByIdQuery,
+  useUpdateProfileMutation,
+} from "../../redux/apiSlice";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
   const [isLoading, setIsLodaing] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
+
+  const userId = useSelector((state) => state.authSlice);
+  const { data: userData, isLoading: userIsLoading } = useGetUserByIdQuery(
+    userId.id
+  );
 
   const [updateProfile, { isLoading: profileLoading, data: profileData }] =
     useUpdateProfileMutation();
@@ -41,9 +50,9 @@ const Profile = () => {
     setProfileImage(null);
   };
 
-  // useEffect(() => {
-  //   console.log(profileLoading, profileData);
-  // }, [profileLoading, profileData]);
+  useEffect(() => {
+    console.log(profileLoading, profileData, userData);
+  }, [profileLoading, profileData, userData]);
 
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
@@ -88,7 +97,9 @@ const Profile = () => {
         <section className="space-y-3 w-[50%] flex items-center justify-center flex-col">
           <div className="w-[400px] h-[400px] rounded-full bg-gray-200 flex justify-center items-center">
             <img
-              src={avatar}
+              src={
+                !userIsLoading && userData ? userData.data.profileImage : avatar
+              }
               alt="Not found"
               className="w-[200px] h-[200px] rounded-full object-cover"
             />
