@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { baseUrl } from "../../config/config";
-import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
+import { ThreeDots } from "react-loader-spinner";
+import { toast, ToastContainer } from "react-toastify";
+import { baseUrl } from "../../config/config";
 
 const Login = () => {
   const [loginFields, setLoginFields] = useState({
@@ -11,6 +12,14 @@ const Login = () => {
     password: "",
   });
   const [isLoading, setIsLodaing] = useState(false);
+  const navigate = useNavigate();
+
+  // restrict logged in users visit login page
+  useEffect(() => {
+    if (Cookies.get("accessToken")) {
+      navigate("/");
+    }
+  }, []);
 
   // handle input fileds
   const handleLoginInput = (e) => {
@@ -41,10 +50,9 @@ const Login = () => {
       const res = await axios.post(`${baseUrl}/users/login`, loginFields);
       if (res.data.statusCode === 200 && res.data.data.user.role === "admin") {
         Cookies.set("accessToken", res.data.data.token.accessToken, {
-          expires: 1,
+          expires: 7,
         });
-        // dispatch(setAuth(res.data.data.user));
-        toast.success("Sign In successful!", {
+        toast.success("Sign In Successful!", {
           position: "top-right",
           autoClose: 1000,
           hideProgressBar: true,
@@ -88,6 +96,7 @@ const Login = () => {
       password: "",
     });
   };
+
   return (
     <main>
       <ToastContainer />
@@ -139,14 +148,29 @@ const Login = () => {
                 <div className="flex items-center justify-end text-base text-primary font-inter font-normal">
                   <Link to="/">Forgot Pasword?</Link>
                 </div>
-                <div className="py-3">
-                  <button
-                    onClick={handleSignIn}
-                    className="bg-secondary w-full h-[60px] text-center text-white font-inter font-normal rounded-lg cursor-pointer transition-all duration-300 ease-linear hover:bg-primary hover:text-white"
-                  >
-                    Log In
-                  </button>
-                </div>
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <ThreeDots
+                      visible={true}
+                      height="80"
+                      width="80"
+                      color="#db4444"
+                      radius="9"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                    />
+                  </div>
+                ) : (
+                  <div className="py-3">
+                    <button
+                      onClick={handleSignIn}
+                      className="bg-secondary w-full h-[60px] text-center text-white font-inter font-normal rounded-lg cursor-pointer transition-all duration-300 ease-linear hover:bg-primary hover:text-white"
+                    >
+                      Log In
+                    </button>
+                  </div>
+                )}
               </form>
               <div>
                 <p className="text-center text-text font-inter font-normal text-base">
