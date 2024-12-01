@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import {
   useCreateCategoryMutation,
+  useDeleteCategoryMutation,
   useGetCategoriesQuery,
 } from "../../redux/apiSlice";
 
@@ -14,6 +15,7 @@ const Category = () => {
   const [createCategory] = useCreateCategoryMutation();
   const { data: getCategories, isLoading: isCategoryLoading } =
     useGetCategoriesQuery();
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   //   handle category input fields
   const handleCategoryInput = (e) => {
@@ -72,6 +74,32 @@ const Category = () => {
       // Handle unexpected errors
       console.error("Error creating category:", error.message);
       toast.error("An unexpected error occurred", {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+    }
+  };
+
+  // handle delete category
+  const handleDeleteCategory = async (id) => {
+    try {
+      const result = await deleteCategory(id).unwrap();
+      toast.success("Category deleted successfully", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+    } catch (error) {
+      toast.error(error.data?.message || "Failed to delete category", {
         position: "top-right",
         autoClose: 2500,
         hideProgressBar: false,
@@ -187,7 +215,10 @@ const Category = () => {
                 <button className="flex-1 py-2 px-4 bg-orange-400 text-white rounded hover:bg-orange-600">
                   Update
                 </button>
-                <button className="flex-1 py-2 px-4 bg-red-400 text-white rounded hover:bg-red-600">
+                <button
+                  className="flex-1 py-2 px-4 bg-red-400 text-white rounded hover:bg-red-600"
+                  onClick={() => handleDeleteCategory(category._id)}
+                >
                   Delete
                 </button>
               </div>

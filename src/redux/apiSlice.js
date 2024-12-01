@@ -5,7 +5,7 @@ import { baseUrl } from "../config/config";
 export const ecommerce = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
-//   tagTypes: ["Category"],
+  tagTypes: ["Category"],
   endpoints: (builder) => ({
     // ##### Category Api Start #####
     createCategory: builder.mutation({
@@ -17,13 +17,25 @@ export const ecommerce = createApi({
           Authorization: Cookies.get("accessToken"),
         },
       }),
+      invalidatesTags: ["Category"],
     }),
     getCategories: builder.query({
       query: () => "/categories",
-    //   providesTags: "Category",
+      providesTags: ["Category"],
+    }),
+    deleteCategory: builder.mutation({
+      query: (id) => ({
+        url: `/categories/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Category"],
     }),
     // ##### Category Api End #####
   }),
 });
 
-export const { useCreateCategoryMutation, useGetCategoriesQuery } = ecommerce;
+export const {
+  useCreateCategoryMutation,
+  useGetCategoriesQuery,
+  useDeleteCategoryMutation,
+} = ecommerce;
