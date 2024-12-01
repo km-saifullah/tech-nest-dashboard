@@ -50,9 +50,7 @@ const Profile = () => {
     setProfileImage(null);
   };
 
-  useEffect(() => {
-    console.log(profileLoading, profileData, userData);
-  }, [profileLoading, profileData, userData]);
+  // useEffect(() => {}, [profileLoading, profileData, userData]);
 
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">

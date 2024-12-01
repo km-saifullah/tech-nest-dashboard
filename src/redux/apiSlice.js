@@ -5,7 +5,7 @@ import { baseUrl } from "../config/config";
 export const ecommerce = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
-  tagTypes: ["Category", "Profile"],
+  tagTypes: ["Category", "Profile", "SubCategory"],
   endpoints: (builder) => ({
     // ##### User Api Start #####
     getUserById: builder.query({
@@ -24,7 +24,7 @@ export const ecommerce = createApi({
       }),
       invalidatesTags: ["Profile"],
     }),
-    // ##### User Api End
+    // ##### User Api End #####
 
     // ##### Category Api Start #####
     createCategory: builder.mutation({
@@ -52,6 +52,25 @@ export const ecommerce = createApi({
       invalidatesTags: ["Category"],
     }),
     // ##### Category Api End #####
+
+    // ##### Sub-category Api Start ####
+    createSubCategory: builder.mutation({
+      query: (data) => ({
+        url: "/sub-categories/add-sub-category",
+        method: "POST",
+        body: data,
+        headers: {
+          Authorization: Cookies.get("accessToken"),
+        },
+      }),
+      invalidatesTags: ["SubCategory"],
+    }),
+
+    getSubCategories: builder.query({
+      query: () => "/sub-categories",
+      providesTags: ["SubCategory"],
+    }),
+    // ##### Sub-category Api End ####
   }),
 });
 
@@ -61,4 +80,6 @@ export const {
   useDeleteCategoryMutation,
   useUpdateProfileMutation,
   useGetUserByIdQuery,
+  useCreateSubCategoryMutation,
+  useGetSubCategoriesQuery
 } = ecommerce;

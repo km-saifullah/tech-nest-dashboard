@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import {
+  useCreateSubCategoryMutation,
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+} from "../../redux/apiSlice";
 
 const SubCategory = () => {
   const [subCategoryInput, setSubCategoryInput] = useState({
@@ -7,6 +12,14 @@ const SubCategory = () => {
     slug: "",
     category: "",
   });
+  const { data: categories, isLoading: categoryLoad } = useGetCategoriesQuery();
+  const [createSubCategory] = useCreateSubCategoryMutation();
+  const { data: subCategories, isLoading: subCategoryLoad } =
+    useGetSubCategoriesQuery();
+
+  useEffect(() => {
+    console.log(subCategories, subCategoryLoad);
+  }, [subCategories, subCategoryLoad]);
 
   //   handle subCategory input fields
   const handleSubCategoryInput = (e) => {
@@ -16,9 +29,11 @@ const SubCategory = () => {
   };
 
   // handle create subCategory
-  const handleCreateSubCategory = (e) => {
+  const handleCreateSubCategory = async (e) => {
     e.preventDefault();
-    console.log(subCategoryInput);
+    try {
+      const res = await createSubCategory(subCategoryInput);
+    } catch (error) {}
   };
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
@@ -100,7 +115,7 @@ const SubCategory = () => {
                   htmlFor=""
                   className="text-primary text-base font-medium font-inter"
                 >
-                  Slug
+                  Select Category
                 </label>
                 <select
                   id=""
@@ -109,8 +124,12 @@ const SubCategory = () => {
                   onChange={handleSubCategoryInput}
                   value={subCategoryInput.category}
                 >
-                  <option value="Category-1">Category-1</option>
-                  <option value="Category-2">Category-2</option>
+                  {!categoryLoad &&
+                    categories.data.data.map(({ categoryName, _id, slug }) => (
+                      <option value={_id} key={slug}>
+                        {categoryName}
+                      </option>
+                    ))}
                 </select>
               </div>
               <div className="bg-secondary px-3 py-2 text-white rounded-lg hover:transition-all hover:duration-300 hover:ease-linear hover:bg-primary">
@@ -121,6 +140,36 @@ const SubCategory = () => {
             </div>
           </div>
         </form>
+      </section>
+      <section className="bg-white mt-5 p-4 rounded-lg">
+        <h2 className="text-heading font-bold font-inter text-xl pb-3">
+          All Sub Categories
+        </h2>
+        <ul className="w-full flex flex-col gap-y-4">
+          {!subCategoryLoad &&
+            subCategories?.data.data.map((item, index) => (
+              <div
+                key={item.slug}
+                className="w-full flex items-center justify-between text-center gap-x-2"
+              >
+                <li className="flex-1 text-base text-primary font-normal font-inter">
+                  {index + 1}
+                </li>
+                <li className="flex-1 text-base text-primary font-normal font-inter capitalize">
+                  {item.subCategoryName}
+                </li>
+                <button className="flex-1 py-2 px-4 bg-orange-400 text-white rounded hover:bg-orange-600">
+                  Update
+                </button>
+                <button
+                  className="flex-1 py-2 px-4 bg-red-400 text-white rounded hover:bg-red-600"
+                  onClick={() => handleDeleteCategory(item._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+        </ul>
       </section>
     </main>
   );
