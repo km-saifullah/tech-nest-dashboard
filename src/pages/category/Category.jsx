@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import {
+  useCreateCategoryMutation,
+  useGetCategoriesQuery,
+} from "../../redux/apiSlice";
 
 const Category = () => {
   const [categoryInput, setCategoryInput] = useState({
     categoryName: "",
     slug: "",
   });
+  const [createCategory] = useCreateCategoryMutation();
+  const { data: getCategories, isLoading: isCategoryLoading } =
+    useGetCategoriesQuery();
 
   //   handle category input fields
   const handleCategoryInput = (e) => {
@@ -19,8 +26,9 @@ const Category = () => {
   const handleCreateCategory = async (e) => {
     try {
       e.preventDefault();
-      if (categoryInput.categoryName === "") {
-        toast.warn("Please enter the ccategory name", {
+
+      if (categoryInput.categoryName.trim() === "") {
+        toast.warn("Please enter the category name", {
           position: "top-right",
           autoClose: 2500,
           hideProgressBar: false,
@@ -29,29 +37,51 @@ const Category = () => {
           draggable: true,
           theme: "dark",
         });
+        return;
+      }
+      const response = await createCategory(categoryInput);
+      if (response.error) {
+        toast.error(
+          response.error.data.message || "Failed to create category",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            theme: "dark",
+          }
+        );
       } else {
-        // await createCategory(categoryInput);
         toast.success("Category Created", {
           position: "top-right",
-          autoClose: 1000,
+          autoClose: 1500,
           hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: false,
           draggable: true,
           theme: "dark",
         });
+        setCategoryInput({
+          categoryName: "",
+          slug: "",
+        });
       }
     } catch (error) {
-      console.log(error.message);
+      // Handle unexpected errors
+      console.error("Error creating category:", error.message);
+      toast.error("An unexpected error occurred", {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
     }
-
-    setCategoryInput({
-      categoryName: "",
-      slug: "",
-    });
   };
-
-  // useEffect(() => {}, [categoryData, isCategoryLoad]);
 
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
@@ -142,8 +172,8 @@ const Category = () => {
           All Categories
         </h2>
         <ul className="w-full flex flex-col gap-y-4">
-          {/* {!isCategoryLoad &&
-            categoryData?.data.data.map((category, index) => (
+          {!isCategoryLoading &&
+            getCategories?.data.data.map((category, index) => (
               <div
                 key={category.slug}
                 className="w-full flex items-center justify-between text-center gap-x-2"
@@ -161,7 +191,7 @@ const Category = () => {
                   Delete
                 </button>
               </div>
-            ))} */}
+            ))}
         </ul>
       </section>
     </main>
