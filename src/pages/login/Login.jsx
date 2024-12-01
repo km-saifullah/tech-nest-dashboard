@@ -5,6 +5,8 @@ import Cookies from "js-cookie";
 import { ThreeDots } from "react-loader-spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { baseUrl } from "../../config/config";
+import { useDispatch } from "react-redux";
+import { setAuth } from "../../redux/authSlice";
 
 const Login = () => {
   const [loginFields, setLoginFields] = useState({
@@ -13,6 +15,7 @@ const Login = () => {
   });
   const [isLoading, setIsLodaing] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // restrict logged in users visit login page
   useEffect(() => {
@@ -52,6 +55,7 @@ const Login = () => {
         Cookies.set("accessToken", res.data.data.token.accessToken, {
           expires: 7,
         });
+        dispatch(setAuth(res.data.data.user));
         toast.success("Sign In Successful!", {
           position: "top-right",
           autoClose: 1000,

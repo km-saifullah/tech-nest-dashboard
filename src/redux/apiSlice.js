@@ -7,6 +7,23 @@ export const ecommerce = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
   tagTypes: ["Category"],
   endpoints: (builder) => ({
+    // ##### User Api Start
+    getUserById: builder.query({
+      query: (id) => `/users/${id}`,
+    }),
+
+    updateProfile: builder.mutation({
+      query: (data) => ({
+        url: "/users/update-user",
+        method: "POST",
+        body: data,
+        headers: {
+          Authorization: Cookies.get("accessToken"),
+        },
+      }),
+    }),
+    // ##### User Api End
+
     // ##### Category Api Start #####
     createCategory: builder.mutation({
       query: (data) => ({
@@ -19,10 +36,12 @@ export const ecommerce = createApi({
       }),
       invalidatesTags: ["Category"],
     }),
+
     getCategories: builder.query({
       query: () => "/categories",
       providesTags: ["Category"],
     }),
+
     deleteCategory: builder.mutation({
       query: (id) => ({
         url: `/categories/${id}`,
@@ -38,4 +57,5 @@ export const {
   useCreateCategoryMutation,
   useGetCategoriesQuery,
   useDeleteCategoryMutation,
+  useUpdateProfileMutation,
 } = ecommerce;

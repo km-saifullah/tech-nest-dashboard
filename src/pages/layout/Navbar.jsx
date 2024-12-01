@@ -9,6 +9,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import Image from "../../components/Image";
 import avatar from "/avatar.svg";
 import { baseUrl } from "../../config/config";
+import { useSelector } from "react-redux";
 
 const Navbar = ({ setIsOpen, isOpen }) => {
   const toggleSidebar = () => {
@@ -19,6 +20,7 @@ const Navbar = ({ setIsOpen, isOpen }) => {
     setIsDropdownVisible((prev) => !prev);
   };
   const navigate = useNavigate();
+  const user = useSelector((state) => state.authSlice.user);
 
   // handle logout
   const handleLogout = async (e) => {
@@ -65,7 +67,10 @@ const Navbar = ({ setIsOpen, isOpen }) => {
           className="relative h-[50px] w-[50px] bg-navIconBg rounded-full flex items-center justify-center p-3 cursor-pointer group"
           onClick={toggleDropdown}
         >
-          <Image imgSrc={avatar} imgAlt="avatar image not found" />
+          <Image
+            imgSrc={user?.profileImage || avatar}
+            imgAlt="avatar image not found"
+          />
           {isDropdownVisible && (
             <div className="absolute top-14 left-0 w-[120px] bg-navIconBg p-3 rounded-md shadow-md">
               <ul>
@@ -81,7 +86,7 @@ const Navbar = ({ setIsOpen, isOpen }) => {
 
         <div className="flex items-center justify-between gap-x-3">
           <h4 className="text-primary text-base font-inter font-medium">
-            {/* {auth?.fullName} */} Hello
+            {user?.fullName || "John Doe"}
           </h4>
           {/* <IoIosArrowForward className="text-primary group-hover:text-white text-2xl cursor-pointer" /> */}
           <button
