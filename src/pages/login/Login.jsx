@@ -4,8 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { baseUrl } from "../../config/config";
 import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
-import { useDispatch, useSelector } from "react-redux";
-import { setAuth, setId } from "../../redux/authSlice";
 
 const Login = () => {
   const [loginFields, setLoginFields] = useState({
@@ -13,15 +11,6 @@ const Login = () => {
     password: "",
   });
   const [isLoading, setIsLodaing] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  // restrict to visit login page after login
-  useEffect(() => {
-    if (Cookies.get("accessToken")) {
-      navigate("/");
-    }
-  }, []);
 
   // handle input fileds
   const handleLoginInput = (e) => {
@@ -31,7 +20,7 @@ const Login = () => {
   };
 
   // handle sign in
-  const handleSignUp = async (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     try {
       setIsLodaing(true);
@@ -50,12 +39,11 @@ const Login = () => {
         return;
       }
       const res = await axios.post(`${baseUrl}/users/login`, loginFields);
-      console.log(res);
       if (res.data.statusCode === 200 && res.data.data.user.role === "admin") {
         Cookies.set("accessToken", res.data.data.token.accessToken, {
           expires: 1,
         });
-        dispatch(setId(res.data.data.user._id));
+        // dispatch(setAuth(res.data.data.user));
         toast.success("Sign In successful!", {
           position: "top-right",
           autoClose: 1000,
@@ -69,7 +57,7 @@ const Login = () => {
           navigate("/");
         }, 1200);
       } else {
-        toast.error("You do not have permission to login", {
+        toast.error("Unauthorized access", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -153,7 +141,7 @@ const Login = () => {
                 </div>
                 <div className="py-3">
                   <button
-                    onClick={handleSignUp}
+                    onClick={handleSignIn}
                     className="bg-secondary w-full h-[60px] text-center text-white font-inter font-normal rounded-lg cursor-pointer transition-all duration-300 ease-linear hover:bg-primary hover:text-white"
                   >
                     Log In

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { baseUrl } from "../../config/config";
 import { ThreeDots } from "react-loader-spinner";
+import Cookies from "js-cookie";
+import { baseUrl } from "../../config/config";
 
 const Signup = () => {
   const [inputFields, setInputFields] = useState({
@@ -13,6 +14,7 @@ const Signup = () => {
     password: "",
   });
   const [isLoading, setIsLodaing] = useState(false);
+  const navigate = useNavigate();
 
   // handle input fields
   const handleInput = (e) => {
@@ -49,7 +51,7 @@ const Signup = () => {
       });
       toast.success("Sign up successful!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: false,
@@ -58,7 +60,6 @@ const Signup = () => {
       });
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        // console.error("Error:", error.response.data.message);
         toast.error(error.response.data.message, {
           position: "top-right",
           autoClose: 1500,
@@ -69,7 +70,6 @@ const Signup = () => {
           theme: "dark",
         });
       } else {
-        // console.error("An unexpected error occurred:", error.message);
         toast.error("Something went wrong!");
       }
     }
@@ -81,6 +81,13 @@ const Signup = () => {
       password: "",
     });
   };
+
+  // restrict to visit signup page after login
+  useEffect(() => {
+    if (Cookies.get("accessToken")) {
+      navigate("/");
+    }
+  }, []);
   return (
     <main>
       <ToastContainer />

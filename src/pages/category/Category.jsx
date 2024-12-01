@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import {
-  useCreateCategoryMutation,
-  useGetCategoriesQuery,
-} from "../../redux/apiSlice";
 import { toast, ToastContainer } from "react-toastify";
 
 const Category = () => {
@@ -11,12 +7,6 @@ const Category = () => {
     categoryName: "",
     slug: "",
   });
-
-  const [createCategory, { data, isSuccess, isLoading, isError, error }] =
-    useCreateCategoryMutation();
-
-  const { data: categoryData, isLoading: isCategoryLoad } =
-    useGetCategoriesQuery();
 
   //   handle category input fields
   const handleCategoryInput = (e) => {
@@ -40,7 +30,7 @@ const Category = () => {
           theme: "dark",
         });
       } else {
-        await createCategory(categoryInput);
+        // await createCategory(categoryInput);
         toast.success("Category Created", {
           position: "top-right",
           autoClose: 1000,
@@ -152,7 +142,7 @@ const Category = () => {
           All Categories
         </h2>
         <ul className="w-full flex flex-col gap-y-4">
-          {!isCategoryLoad &&
+          {/* {!isCategoryLoad &&
             categoryData?.data.data.map((category, index) => (
               <div
                 key={category.slug}
@@ -171,7 +161,7 @@ const Category = () => {
                   Delete
                 </button>
               </div>
-            ))}
+            ))} */}
         </ul>
       </section>
     </main>

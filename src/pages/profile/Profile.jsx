@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import Image from "../../components/Image";
-import { authSlice } from "../../redux/authSlice";
 import avatar from "/avatar.svg";
-import { useSelector } from "react-redux";
 import { GrUploadOption } from "react-icons/gr";
-import { useUpdateProfileMutation } from "../../redux/apiSlice";
 import { toast, ToastContainer } from "react-toastify";
 
 const Profile = () => {
-  const auth = useSelector((state) => state.authSlice.user);
-  const [updateProfile, { isLoading, error, data }] =
-    useUpdateProfileMutation();
-
-  const [profileImage, setProfileImage] = useState(null);
+  const [isLoading, setIsLodaing] = useState(false);
 
   // handle update user profile image
   const handleUpdateAvatar = async () => {
@@ -30,17 +22,44 @@ const Profile = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("profileImage", profileImage);
     try {
-      await updateProfile(profileImage);
-      toast.success("Profile updated successfully!", {
-        position: "top-right",
-        autoClose: 2500,
-        closeOnClick: true,
-        theme: "dark",
-      });
-      setProfileImage(null);
+      // const response = await updateProfile(formData);
+
+      // // Update Redux state and localStorage
+      // const updatedUser = { ...auth, profileImage: response.data.profileImage };
+      // dispatch(setAuth(updatedUser));
+
+      // // await updateProfile(profileImage);
+      // toast.success("Profile updated successfully!", {
+      //   position: "top-right",
+      //   autoClose: 2500,
+      //   closeOnClick: true,
+      //   theme: "dark",
+      // });
+      // setProfileImage(null);
+      // Call the API to upload the image
+      const formData = new FormData();
+      formData.append("profileImage", profileImage);
+      // const response = await updateProfile(formData);
+
+      if (response.status === 200) {
+        toast.success("Profile updated successfully!", {
+          position: "top-right",
+          autoClose: 2500,
+          closeOnClick: true,
+          theme: "dark",
+        });
+
+        // Clear the input field after successful upload
+        // setProfileImage(null);
+      } else {
+        toast.error("Failed to update profile image. Please try again.", {
+          position: "top-right",
+          autoClose: 2000,
+          closeOnClick: true,
+          theme: "dark",
+        });
+      }
     } catch (error) {
       console.log(error.message);
     }
@@ -89,7 +108,7 @@ const Profile = () => {
         <section className="space-y-3 w-[50%] flex items-center justify-center flex-col">
           <div className="w-[400px] h-[400px] rounded-full bg-gray-200 flex justify-center items-center">
             <img
-              src={auth?.profileImage || avatar}
+              src={avatar}
               alt="Not found"
               className="w-[200px] h-[200px] rounded-full object-cover"
             />
@@ -107,7 +126,7 @@ const Profile = () => {
                   className="hidden"
                 />
               </label>
-              {profileImage && <p>{profileImage.name}</p>}
+              {/* {profileImage && <p>{profileImage.name}</p>} */}
             </div>
             <div>
               <button
