@@ -5,9 +5,14 @@ import { baseUrl } from "../config/config";
 export const ecommerce = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
-  tagTypes: ["Category", "Profile", "SubCategory"],
+  tagTypes: ["Category", "Profile", "SubCategory", "Users"],
   endpoints: (builder) => ({
     // ##### User Api Start #####
+    getUsers: builder.query({
+      query: () => `/users`,
+      providesTags: ["Users"],
+    }),
+
     getUserById: builder.query({
       query: (id) => `/users/${id}`,
       providesTags: ["Profile"],
@@ -81,5 +86,6 @@ export const {
   useUpdateProfileMutation,
   useGetUserByIdQuery,
   useCreateSubCategoryMutation,
-  useGetSubCategoriesQuery
+  useGetSubCategoriesQuery,
+  useGetUsersQuery,
 } = ecommerce;

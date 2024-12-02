@@ -17,9 +17,9 @@ const SubCategory = () => {
   const { data: subCategories, isLoading: subCategoryLoad } =
     useGetSubCategoriesQuery();
 
-  useEffect(() => {
-    console.log(subCategories, subCategoryLoad);
-  }, [subCategories, subCategoryLoad]);
+  // useEffect(() => {
+  //   console.log(subCategories, subCategoryLoad);
+  // }, [subCategories, subCategoryLoad]);
 
   //   handle subCategory input fields
   const handleSubCategoryInput = (e) => {
