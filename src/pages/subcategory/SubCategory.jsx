@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   useCreateSubCategoryMutation,
+  useDeleteSubCategoryMutation,
   useGetCategoriesQuery,
   useGetSubCategoriesQuery,
 } from "../../redux/apiSlice";
+import { toast, ToastContainer } from "react-toastify";
 
 const SubCategory = () => {
   const [subCategoryInput, setSubCategoryInput] = useState({
@@ -12,14 +14,16 @@ const SubCategory = () => {
     slug: "",
     category: "",
   });
+
   const { data: categories, isLoading: categoryLoad } = useGetCategoriesQuery();
   const [createSubCategory] = useCreateSubCategoryMutation();
   const { data: subCategories, isLoading: subCategoryLoad } =
     useGetSubCategoriesQuery();
+  const [deleteSubCategory] = useDeleteSubCategoryMutation();
 
-  // useEffect(() => {
-  //   console.log(subCategories, subCategoryLoad);
-  // }, [subCategories, subCategoryLoad]);
+  useEffect(() => {
+    console.log(subCategories);
+  }, [subCategories]);
 
   //   handle subCategory input fields
   const handleSubCategoryInput = (e) => {
@@ -32,12 +36,124 @@ const SubCategory = () => {
   const handleCreateSubCategory = async (e) => {
     e.preventDefault();
     try {
+      if (
+        subCategoryInput.subCategoryName.trim() === "" ||
+        subCategoryInput.category.trim() === ""
+      ) {
+        toast.warn("Please enter the sub-category name and select category", {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
+        return;
+      }
+
+      // API Call
       const res = await createSubCategory(subCategoryInput);
-    } catch (error) {}
+      console.log(res);
+
+      // Handle Response
+      if (res.error) {
+        toast.error(res.error.data.message || "Failed to create sub-category", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
+      } else {
+        toast.success("Sub-category Created", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+        });
+      }
+
+      // Reset Input
+      setSubCategoryInput({
+        subCategoryName: "",
+        slug: "",
+        category: "",
+      });
+    } catch (error) {
+      console.error("Error creating sub-category:", error);
+      toast.error("An unexpected error occurred. Please try again later.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+    }
+  };
+
+  // handle delete sub-category
+  // const handleDeleteSubCategory = async (id) => {
+  //   console.log('clicked')
+  //   try {
+  //     await deleteSubCategory(id).unwrap();
+  //     toast.success("Sub-category deleted successfully", {
+  //       position: "top-right",
+  //       autoClose: 1000,
+  //       hideProgressBar: true,
+  //       closeOnClick: true,
+  //       pauseOnHover: false,
+  //       draggable: true,
+  //       theme: "dark",
+  //     });
+  //   } catch (error) {
+  //     toast.error(error.data?.message || "Failed to delete category", {
+  //       position: "top-right",
+  //       autoClose: 2500,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: false,
+  //       draggable: true,
+  //       theme: "dark",
+  //     });
+  //   }
+  // };
+
+  const handleDeleteSubCategory = async (id) => {
+    try {
+      const result = await deleteSubCategory(id).unwrap();
+      toast.success("Sub-category deleted successfully", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+    } catch (error) {
+      toast.error(error.data?.message || "Failed to delete category", {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+    }
   };
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
       <section className="space-y-3">
+        <ToastContainer />
         <h3 className="text-2xl text-primary font-semibold font-inter ">
           Sub-Category
         </h3>
@@ -119,14 +235,18 @@ const SubCategory = () => {
                 </label>
                 <select
                   id=""
-                  className="w-full outline-none border border-borderColor p-3 rounded-lg"
+                  className="w-full outline-none border border-borderColor p-3 rounded-lg capitalize"
                   name="category"
                   onChange={handleSubCategoryInput}
                   value={subCategoryInput.category}
                 >
                   {!categoryLoad &&
                     categories.data.data.map(({ categoryName, _id, slug }) => (
-                      <option value={_id} key={slug}>
+                      <option
+                        value={_id}
+                        key={slug}
+                        className="capitalize text-gray-700 bg-white hover:bg-blue-100 px-2 py-1 rounded-md"
+                      >
                         {categoryName}
                       </option>
                     ))}
@@ -147,7 +267,7 @@ const SubCategory = () => {
         </h2>
         <ul className="w-full flex flex-col gap-y-4">
           {!subCategoryLoad &&
-            subCategories?.data.data.map((item, index) => (
+            subCategories?.data?.data?.map((item, index) => (
               <div
                 key={item.slug}
                 className="w-full flex items-center justify-between text-center gap-x-2"
@@ -163,7 +283,7 @@ const SubCategory = () => {
                 </button>
                 <button
                   className="flex-1 py-2 px-4 bg-red-400 text-white rounded hover:bg-red-600"
-                  onClick={() => handleDeleteCategory(item._id)}
+                  onClick={() => handleDeleteSubCategory(item._id)}
                 >
                   Delete
                 </button>

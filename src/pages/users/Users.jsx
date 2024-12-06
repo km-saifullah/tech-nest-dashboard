@@ -5,9 +5,6 @@ import img from "/avatar.svg";
 
 const Users = () => {
   const { data: users, isLoading: userLoad } = useGetUsersQuery();
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
       <section className="space-y-3">
@@ -51,21 +48,21 @@ const Users = () => {
           All Users
         </h3>
         <p className="text-sm text-text font-normal font-inter pt-2">
-          Total Users: {users.data.length}
+          Total Users: {users?.data?.length}
         </p>
         <section>
           <ul className="pt-4 w-full flex flex-col">
             {!userLoad &&
               users.data.map((user) => (
                 <div
-                  key={user._id}
+                  key={user?._id}
                   className="flex items-center justify-between py-3 gap-x-2"
                 >
                   <li className="w-[10%]">
                     <img
-                      src={user.profileImage || img}
+                      src={user?.profileImage || img}
                       alt=""
-                      className="bg-gray-300 w-[45px] h-[45px] rounded-full p-2"
+                      className="bg-gray-200 w-[45px] h-[45px] rounded-full p-2"
                     />
                   </li>
                   <li className="text-base text-primary font-normal font-inter w-[30%] capitalize">
@@ -96,7 +93,7 @@ const Users = () => {
                           : "bg-violet-400 text-white"
                       } px-3 py-1  rounded-badge font-medium`}
                     >
-                      {user.emailVerified ? "Verified" : "Unverified"}
+                      {user?.emailVerified ? "Verified" : "Unverified"}
                     </span>
                   </li>
                 </div>

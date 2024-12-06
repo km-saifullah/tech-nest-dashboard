@@ -75,6 +75,14 @@ export const ecommerce = createApi({
       query: () => "/sub-categories",
       providesTags: ["SubCategory"],
     }),
+
+    deleteSubCategory: builder.mutation({
+      query: (id) => ({
+        url: `/sub-categories/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["SubCategory"],
+    }),
     // ##### Sub-category Api End ####
   }),
 });
@@ -87,5 +95,6 @@ export const {
   useGetUserByIdQuery,
   useCreateSubCategoryMutation,
   useGetSubCategoriesQuery,
+  useDeleteSubCategoryMutation,
   useGetUsersQuery,
 } = ecommerce;
