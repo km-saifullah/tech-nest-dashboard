@@ -98,6 +98,11 @@ export const ecommerce = createApi({
       invalidatesTags: ["Product"],
     }),
 
+    getProducts: builder.query({
+      query: () => "/products",
+      providesTags: ["Product"],
+    }),
+
     // ##### Product Api End #####
   }),
 });
@@ -113,4 +118,5 @@ export const {
   useDeleteSubCategoryMutation,
   useGetUsersQuery,
   useCreateProductMutation,
+  useGetProductsQuery,
 } = ecommerce;

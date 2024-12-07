@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useGetProductsQuery } from "../../redux/apiSlice";
 
 const Inventory = () => {
   const [inventoryInput, setInventoryInput] = useState({
@@ -11,6 +12,9 @@ const Inventory = () => {
     discountType: "",
     quantity: "",
   });
+
+  // api
+  const { data: products, isLoading: isPorductLoading } = useGetProductsQuery();
 
   //   handle inventory input fields
   const handleInventoryInput = (e) => {
@@ -33,6 +37,10 @@ const Inventory = () => {
       quantity: "",
     });
   };
+
+  // useEffect(() => {
+  //   console.log(products, isPorductLoading);
+  // }, [products, isPorductLoading]);
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
       <section className="space-y-3">
@@ -91,7 +99,12 @@ const Inventory = () => {
                   onChange={handleInventoryInput}
                 >
                   <option value="Product-1">Product-1</option>
-                  <option value="Product-2">Product-2</option>
+                  {!isPorductLoading &&
+                    products?.data?.products.map((product) => (
+                      <option value={product._id} key={product._id}>
+                        {product.title}
+                      </option>
+                    ))}
                 </select>
               </div>
               <div className="flex flex-col space-y-3 w-[45%]">
