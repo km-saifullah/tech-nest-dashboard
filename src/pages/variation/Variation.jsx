@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useCreateVariationMutation } from "../../redux/apiSlice";
+import {
+  useCreateVariationMutation,
+  useGetVariationsQuery,
+} from "../../redux/apiSlice";
 
 const Variation = () => {
   const [variations, setVariations] = useState([{ attribute: "", value: "" }]);
@@ -8,6 +11,8 @@ const Variation = () => {
 
   const [createProductVariation, { isLoading, isSuccess, isError, error }] =
     useCreateVariationMutation();
+  const { data: variationData, isLoading: variationLoading } =
+    useGetVariationsQuery();
 
   const handleAddVariation = () => {
     setVariations([...variations, { attribute: "", value: "" }]);
@@ -35,6 +40,10 @@ const Variation = () => {
       console.error("Failed to create product variation:", err);
     }
   };
+
+  useEffect(() => {
+    console.log(variationData, variationLoading);
+  }, [variationData, variationLoading]);
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
       <section className="space-y-3">
@@ -166,6 +175,46 @@ const Variation = () => {
             )}
           </div>
         </form>
+      </section>
+      <section className="bg-white mt-5 p-4 rounded-lg">
+        <h2 className="text-heading font-bold font-inter text-xl pb-3">
+          All Product Variations
+        </h2>
+        <ul className="w-full flex flex-col gap-y-4">
+          {!variationLoading &&
+            variationData?.data?.map((item, index) => (
+              <div
+                key={index}
+                className="w-full flex items-center justify-between text-center gap-x-2"
+              >
+                <li className="w-[15%] flex-1 text-base text-primary font-normal font-inter">
+                  {index + 1}
+                </li>
+                {item?.variations?.map((variation) => (
+                  <div
+                    key={variation._id}
+                    className="flex items-center justify-between gap-x-5"
+                  >
+                    <li className="flex-1 text-base text-primary font-normal font-inter capitalize">
+                      {variation.attribute}
+                    </li>
+                    <li className="flex-1 text-base text-primary font-normal font-inter capitalize">
+                      {variation.value}
+                    </li>
+                  </div>
+                ))}
+                <button className="flex-1 py-2 px-4 bg-orange-400 text-white rounded hover:bg-orange-600">
+                  Update
+                </button>
+                <button
+                  className="flex-1 py-2 px-4 bg-red-400 text-white rounded hover:bg-red-600"
+                  onClick={() => handleDeleteCategory(category._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+        </ul>
       </section>
     </main>
   );

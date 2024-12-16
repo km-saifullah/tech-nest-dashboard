@@ -120,6 +120,11 @@ export const ecommerce = createApi({
       }),
       invalidatesTags: ["Variation"],
     }),
+
+    getVariations: builder.query({
+      query: () => "/product-variations",
+      providesTags: ["Variation"],
+    }),
     // ##### Variation Api End #####
   }),
 });
@@ -137,4 +142,5 @@ export const {
   useCreateProductMutation,
   useGetProductsQuery,
   useCreateVariationMutation,
+  useGetVariationsQuery,
 } = ecommerce;
