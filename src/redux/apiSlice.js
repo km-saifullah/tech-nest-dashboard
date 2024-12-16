@@ -5,7 +5,14 @@ import { baseUrl } from "../config/config";
 export const ecommerce = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
-  tagTypes: ["Category", "Profile", "SubCategory", "Users", "Product"],
+  tagTypes: [
+    "Category",
+    "Profile",
+    "SubCategory",
+    "Users",
+    "Product",
+    "Variation",
+  ],
   endpoints: (builder) => ({
     // ##### User Api Start #####
     getUsers: builder.query({
@@ -102,8 +109,18 @@ export const ecommerce = createApi({
       query: () => "/products",
       providesTags: ["Product"],
     }),
-
     // ##### Product Api End #####
+
+    // ##### Variation Api Start #####
+    createVariation: builder.mutation({
+      query: (data) => ({
+        url: "/product-variations",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Variation"],
+    }),
+    // ##### Variation Api End #####
   }),
 });
 
@@ -119,4 +136,5 @@ export const {
   useGetUsersQuery,
   useCreateProductMutation,
   useGetProductsQuery,
+  useCreateVariationMutation,
 } = ecommerce;

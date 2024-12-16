@@ -1,17 +1,39 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { useCreateVariationMutation } from "../../redux/apiSlice";
 
 const Variation = () => {
-  const [variationName, setVariationName] = useState("");
+  const [variations, setVariations] = useState([{ attribute: "", value: "" }]);
+  const [productId, setProductId] = useState("");
+
+  const [createProductVariation, { isLoading, isSuccess, isError, error }] =
+    useCreateVariationMutation();
+
+  const handleAddVariation = () => {
+    setVariations([...variations, { attribute: "", value: "" }]);
+  };
+
+  const handleRemoveVariation = (index) => {
+    setVariations(variations.filter((_, idx) => idx !== index));
+  };
+
+  const handleVariationChange = (index, field, value) => {
+    const updatedVariations = [...variations];
+    updatedVariations[index][field] = value;
+    setVariations(updatedVariations);
+  };
 
   // handle create variation
-  const handleCreateVariation = (e) => {
-    if (variationName === "") {
-      alert("Please enter a product variation name");
-    }
-
-    setVariationName("");
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await createProductVariation({ variations, productId }).unwrap();
+      alert("Product variation created successfully");
+      setVariations([{ attribute: "", value: "" }]);
+      setProductId("");
+    } catch (err) {
+      console.error("Failed to create product variation:", err);
+    }
   };
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
@@ -52,27 +74,96 @@ const Variation = () => {
         </ul>
       </section>
       <section className="bg-white mt-6 p-5 rounded">
-        <form action="">
-          <div className="flex items-center justify-between">
+        <form onSubmit={handleSubmit}>
+          <div className="flex items-center justify-between flex-wrap">
             <div className="flex flex-col space-y-3">
               <label
-                htmlFor=""
+                htmlFor="productId"
                 className="text-primary text-base font-medium font-inter"
               >
-                Variation Name
+                Product ID
               </label>
               <input
                 type="text"
-                placeholder="Enter Variation Name"
-                name="productVariation"
-                value={variationName}
-                onChange={(e) => setVariationName(e.target.value)}
+                placeholder="Enter Product ID"
+                id="productId"
+                value={productId}
+                onChange={(e) => setProductId(e.target.value)}
                 className="w-full outline-none border border-borderColor p-3 rounded-lg"
+                required
               />
             </div>
-            <div className="bg-secondary px-3 py-2 text-white rounded-lg hover:transition-all hover:duration-300 hover:ease-linear hover:bg-primary">
-              <button onClick={handleCreateVariation}>Create Variation</button>
+            <div className="flex flex-col space-y-3">
+              {variations.map((variation, index) => (
+                <div key={index} className="flex flex-col space-y-3">
+                  <label
+                    htmlFor={`attribute-${index}`}
+                    className="text-primary text-base font-medium font-inter"
+                  >
+                    Attribute
+                  </label>
+                  <input
+                    type="text"
+                    id={`attribute-${index}`}
+                    value={variation.attribute}
+                    placeholder="Variaiton Type e.g. color,form factor"
+                    onChange={(e) =>
+                      handleVariationChange(index, "attribute", e.target.value)
+                    }
+                    className="w-full outline-none border border-borderColor p-3 rounded-lg"
+                    required
+                  />
+
+                  <label
+                    htmlFor={`value-${index}`}
+                    className="text-primary text-base font-medium font-inter"
+                  >
+                    Value
+                  </label>
+                  <input
+                    type="text"
+                    id={`value-${index}`}
+                    value={variation.value}
+                    placeholder="Variaiton Value e.g. 8gb,sm,red"
+                    onChange={(e) =>
+                      handleVariationChange(index, "value", e.target.value)
+                    }
+                    className="w-full outline-none border border-borderColor p-3 rounded-lg"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveVariation(index)}
+                    className="bg-secondary px-3 py-2 text-white rounded-lg hover:transition-all hover:duration-300 hover:ease-linear hover:bg-primary"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
             </div>
+            <div className="flex flex-col space-y-3">
+              <button
+                type="button"
+                onClick={handleAddVariation}
+                className="bg-secondary px-3 py-2 text-white rounded-lg hover:transition-all hover:duration-300 hover:ease-linear hover:bg-primary"
+              >
+                Add Variation
+              </button>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="bg-green-600 px-3 py-2 text-white rounded-lg hover:transition-all hover:duration-300 hover:ease-linear hover:bg-primary"
+              >
+                {isLoading ? "Creating..." : "Create Variations"}
+              </button>
+            </div>
+
+            {isSuccess && <p>Product variation created successfully!</p>}
+            {isError && (
+              <p>Error: {error?.data?.message || "Something went wrong"}</p>
+            )}
           </div>
         </form>
       </section>
