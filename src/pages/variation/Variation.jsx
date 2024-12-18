@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   useCreateVariationMutation,
+  useDeleteVariationMutation,
   useGetVariationsQuery,
 } from "../../redux/apiSlice";
 
@@ -13,6 +14,7 @@ const Variation = () => {
     useCreateVariationMutation();
   const { data: variationData, isLoading: variationLoading } =
     useGetVariationsQuery();
+  const [deleteVariation] = useDeleteVariationMutation();
 
   const handleAddVariation = () => {
     setVariations([...variations, { attribute: "", value: "" }]);
@@ -37,13 +39,21 @@ const Variation = () => {
       setVariations([{ attribute: "", value: "" }]);
       setProductId("");
     } catch (err) {
-      console.error("Failed to create product variation:", err);
+      // console.error("Failed to create product variation:", err);
     }
   };
 
-  useEffect(() => {
-    console.log(variationData, variationLoading);
-  }, [variationData, variationLoading]);
+  // handle delete variation
+  const handleDeleteVariation = async (id) => {
+    try {
+      await deleteVariation(id).unwrap();
+      alert("Variation deleted successfully");
+    } catch (error) {
+      // console.error("Error deleting variation:", error);
+      alert(error?.data?.message || "Failed to delete variation");
+    }
+  };
+
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
       <section className="space-y-3">
@@ -208,7 +218,7 @@ const Variation = () => {
                 </button>
                 <button
                   className="flex-1 py-2 px-4 bg-red-400 text-white rounded hover:bg-red-600"
-                  onClick={() => handleDeleteCategory(category._id)}
+                  onClick={() => handleDeleteVariation(item._id)}
                 >
                   Delete
                 </button>

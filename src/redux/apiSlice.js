@@ -126,6 +126,14 @@ export const ecommerce = createApi({
       query: () => "/product-variations",
       providesTags: ["Variation"],
     }),
+
+    deleteVariation: builder.mutation({
+      query: (id) => ({
+        url: `/product-variations/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Variation"],
+    }),
     // ##### Variation Api End #####
 
     // ##### Inventory Api Start #####
@@ -155,5 +163,6 @@ export const {
   useGetProductsQuery,
   useCreateVariationMutation,
   useGetVariationsQuery,
+  useDeleteVariationMutation,
   useCreateInventoryMutation,
 } = ecommerce;
