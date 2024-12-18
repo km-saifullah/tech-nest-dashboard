@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useGetProductsQuery } from "../../redux/apiSlice";
+import {
+  useCreateInventoryMutation,
+  useGetProductsQuery,
+  useGetVariationsQuery,
+} from "../../redux/apiSlice";
 
 const Inventory = () => {
   const [inventoryInput, setInventoryInput] = useState({
@@ -15,18 +19,37 @@ const Inventory = () => {
 
   // api
   const { data: products, isLoading: isPorductLoading } = useGetProductsQuery();
+  const { data: variation, isLoading: variationLoading } =
+    useGetVariationsQuery();
+  const [createInventory] = useCreateInventoryMutation();
 
   //   handle inventory input fields
   const handleInventoryInput = (e) => {
-    let inventoryInfo = { ...inventoryInput };
-    inventoryInfo[e.target.name] = e.target.value;
-    setInventoryInput(inventoryInfo);
+    // let inventoryInfo = { ...inventoryInput };
+    // inventoryInfo[e.target.name] = e.target.value;
+    // setInventoryInput(inventoryInfo);
+    const { name, value } = e.target;
+    setInventoryInput((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
+  const variationOptions = variation?.data?.flatMap((variation) =>
+    variation?.variations?.map((v) => ({
+      id: `${variation._id}`,
+      label: `${v.attribute}: ${v.value}`,
+      value: v.value,
+    }))
+  );
+
   // handle create inventory
-  const handleCreateInventory = (e) => {
+  const handleCreateInventory = async (e) => {
     e.preventDefault();
-    console.log(inventoryInput);
+    try {
+      const inventory = await createInventory(inventoryInput);
+      console.log(inventory);
+    } catch (error) {}
     setInventoryInput({
       product: "",
       productVariation: "",
@@ -38,9 +61,9 @@ const Inventory = () => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log(products, isPorductLoading);
-  // }, [products, isPorductLoading]);
+  useEffect(() => {
+    console.log(variation, variationLoading);
+  }, [variation, variationLoading]);
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
       <section className="space-y-3">
@@ -98,7 +121,7 @@ const Inventory = () => {
                   value={inventoryInput.product}
                   onChange={handleInventoryInput}
                 >
-                  <option value="Product-1">Product-1</option>
+                  <option value="Product-1">Select Product</option>
                   {!isPorductLoading &&
                     products?.data?.products.map((product) => (
                       <option value={product._id} key={product._id}>
@@ -123,7 +146,11 @@ const Inventory = () => {
                   onChange={handleInventoryInput}
                 >
                   <option value="Variation-1">Variation-1</option>
-                  <option value="Variation-2">Variation-2</option>
+                  {variationOptions?.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.value}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex flex-col space-y-3 w-[45%]">
@@ -190,6 +217,7 @@ const Inventory = () => {
                   value={inventoryInput.discountType}
                   onChange={handleInventoryInput}
                 >
+                  <option value="Discount Type">Discount Type</option>
                   <option value="ammount">Ammount</option>
                   <option value="percentage">Percentage</option>
                 </select>

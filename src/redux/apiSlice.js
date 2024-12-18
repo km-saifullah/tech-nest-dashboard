@@ -12,6 +12,7 @@ export const ecommerce = createApi({
     "Users",
     "Product",
     "Variation",
+    "Inventory",
   ],
   endpoints: (builder) => ({
     // ##### User Api Start #####
@@ -126,6 +127,17 @@ export const ecommerce = createApi({
       providesTags: ["Variation"],
     }),
     // ##### Variation Api End #####
+
+    // ##### Inventory Api Start #####
+    createInventory: builder.mutation({
+      query: (data) => ({
+        url: "/inventories",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Inventory"],
+    }),
+    // ##### Inventory Api End #####
   }),
 });
 
@@ -143,4 +155,5 @@ export const {
   useGetProductsQuery,
   useCreateVariationMutation,
   useGetVariationsQuery,
+  useCreateInventoryMutation,
 } = ecommerce;
