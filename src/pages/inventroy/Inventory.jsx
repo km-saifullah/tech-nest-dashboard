@@ -5,6 +5,7 @@ import {
   useGetProductsQuery,
   useGetVariationsQuery,
 } from "../../redux/apiSlice";
+import { toast, ToastContainer } from "react-toastify";
 
 const Inventory = () => {
   const [inventoryInput, setInventoryInput] = useState({
@@ -25,9 +26,6 @@ const Inventory = () => {
 
   //   handle inventory input fields
   const handleInventoryInput = (e) => {
-    // let inventoryInfo = { ...inventoryInput };
-    // inventoryInfo[e.target.name] = e.target.value;
-    // setInventoryInput(inventoryInfo);
     const { name, value } = e.target;
     setInventoryInput((prevState) => ({
       ...prevState,
@@ -48,7 +46,15 @@ const Inventory = () => {
     e.preventDefault();
     try {
       const inventory = await createInventory(inventoryInput);
-      console.log(inventory);
+      toast.success("Inventory Created", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
     } catch (error) {}
     setInventoryInput({
       product: "",
@@ -61,11 +67,9 @@ const Inventory = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(variation, variationLoading);
-  }, [variation, variationLoading]);
   return (
     <main className="bg-gray-200 mt-6 rounded-lg p-5">
+      <ToastContainer />
       <section className="space-y-3">
         <h3 className="text-2xl text-primary font-semibold font-inter ">
           Inventory
