@@ -5,6 +5,7 @@ import {
   useCreateCategoryMutation,
   useDeleteCategoryMutation,
   useGetCategoriesQuery,
+  useUpdateCategoryMutation,
 } from "../../redux/apiSlice";
 
 const Category = () => {
@@ -16,6 +17,10 @@ const Category = () => {
   const { data: getCategories, isLoading: isCategoryLoading } =
     useGetCategoriesQuery();
   const [deleteCategory] = useDeleteCategoryMutation();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [updateCategory] = useUpdateCategoryMutation();
 
   //   handle category input fields
   const handleCategoryInput = (e) => {
@@ -106,6 +111,50 @@ const Category = () => {
         closeOnClick: true,
         pauseOnHover: false,
         draggable: true,
+        theme: "dark",
+      });
+    }
+  };
+
+  // Handle edit category
+  const handleEditCategory = (category) => {
+    setSelectedCategory(category);
+    setCategoryInput({
+      categoryName: category.categoryName,
+      slug: category.slug,
+    });
+    setIsModalOpen(true);
+  };
+
+  // handle update category
+  const handleUpdateCategory = async (id, updatedData) => {
+    // e.preventDefault();
+    try {
+      // const updatedData = { ...categoryInput, id: selectedCategory._id };
+      const response = await updateCategory({ id, ...updatedData }).unwrap();
+      if (response.error) {
+        toast.error(
+          response.error.data.message || "Failed to update category",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            theme: "dark",
+          }
+        );
+      } else {
+        toast.success("Category updated successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          theme: "dark",
+        });
+        setIsModalOpen(false);
+        setSelectedCategory(null);
+      }
+    } catch (error) {
+      console.error("Error updating category:", error.message);
+      toast.error("An unexpected error occurred", {
+        position: "top-right",
+        autoClose: 2500,
         theme: "dark",
       });
     }
@@ -212,7 +261,10 @@ const Category = () => {
                 <li className="flex-1 text-base text-primary font-normal font-inter capitalize">
                   {category.categoryName}
                 </li>
-                <button className="flex-1 py-2 px-4 bg-orange-400 text-white rounded hover:bg-orange-600">
+                <button
+                  className="flex-1 py-2 px-4 bg-orange-400 text-white rounded hover:bg-orange-600"
+                  onClick={() => handleEditCategory(category._id)}
+                >
                   Update
                 </button>
                 <button
@@ -225,6 +277,54 @@ const Category = () => {
             ))}
         </ul>
       </section>
+
+      {/* Modal for editing */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg space-y-4">
+            <h3 className="text-lg font-bold">Edit Category</h3>
+            <form onSubmit={handleUpdateCategory}>
+              <div className="flex flex-col space-y-3">
+                <label className="text-primary font-medium">
+                  Category Name
+                </label>
+                <input
+                  type="text"
+                  name="categoryName"
+                  value={categoryInput.categoryName}
+                  onChange={handleCategoryInput}
+                  className="w-full border border-gray-300 p-2 rounded"
+                />
+              </div>
+              <div className="flex flex-col space-y-3">
+                <label className="text-primary font-medium">Slug</label>
+                <input
+                  type="text"
+                  name="slug"
+                  value={categoryInput.slug}
+                  onChange={handleCategoryInput}
+                  className="w-full border border-gray-300 p-2 rounded"
+                />
+              </div>
+              <div className="flex justify-end space-x-3 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

@@ -64,6 +64,18 @@ export const ecommerce = createApi({
       }),
       invalidatesTags: ["Category"],
     }),
+
+    updateCategory: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/categories/${id}`,
+        method: "PUT",
+        body: data,
+        headers: {
+          Authorization: Cookies.get("accessToken"),
+        },
+      }),
+      invalidatesTags: ["Category"],
+    }),
     // ##### Category Api End #####
 
     // ##### Sub-category Api Start ####
@@ -157,6 +169,7 @@ export const {
   useGetUserByIdQuery,
   useCreateSubCategoryMutation,
   useGetSubCategoriesQuery,
+  useUpdateCategoryMutation,
   useDeleteSubCategoryMutation,
   useGetUsersQuery,
   useCreateProductMutation,
