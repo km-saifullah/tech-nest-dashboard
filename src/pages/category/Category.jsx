@@ -7,6 +7,7 @@ import {
   useGetCategoriesQuery,
   useUpdateCategoryMutation,
 } from "../../redux/apiSlice";
+import EditCategoryModal from "../../components/EditCategoryModal";
 
 const Category = () => {
   const [categoryInput, setCategoryInput] = useState({
@@ -24,9 +25,21 @@ const Category = () => {
 
   //   handle category input fields
   const handleCategoryInput = (e) => {
-    let categoryInfo = { ...categoryInput };
-    categoryInfo[e.target.name] = e.target.value;
-    setCategoryInput(categoryInfo);
+    // let categoryInfo = { ...categoryInput };
+    // categoryInfo[e.target.name] = e.target.value;
+    // setCategoryInput(categoryInfo);
+    setCategoryInput((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value || "",
+    }));
+  };
+
+  // reset state with default values
+  const resetCategoryInput = () => {
+    setCategoryInput({
+      categoryName: "",
+      slug: "",
+    });
   };
 
   // handle create category
@@ -70,14 +83,10 @@ const Category = () => {
           draggable: true,
           theme: "dark",
         });
-        setCategoryInput({
-          categoryName: "",
-          slug: "",
-        });
+        resetCategoryInput();
       }
     } catch (error) {
       // Handle unexpected errors
-      console.error("Error creating category:", error.message);
       toast.error("An unexpected error occurred", {
         position: "top-right",
         autoClose: 2500,
@@ -127,11 +136,24 @@ const Category = () => {
   };
 
   // handle update category
-  const handleUpdateCategory = async (id, updatedData) => {
-    // e.preventDefault();
+  const handleUpdateCategory = async (e) => {
+    e.preventDefault();
     try {
-      // const updatedData = { ...categoryInput, id: selectedCategory._id };
-      const response = await updateCategory({ id, ...updatedData }).unwrap();
+      if (categoryInput.categoryName.trim() === "") {
+        toast.warn("Please enter the category name", {
+          position: "top-right",
+          autoClose: 2500,
+          theme: "dark",
+        });
+        return;
+      }
+
+      const response = await updateCategory({
+        id: selectedCategory,
+        categoryName: categoryInput.categoryName,
+        slug: categoryInput.slug,
+      });
+
       if (response.error) {
         toast.error(
           response.error.data.message || "Failed to update category",
@@ -149,9 +171,9 @@ const Category = () => {
         });
         setIsModalOpen(false);
         setSelectedCategory(null);
+        resetCategoryInput();
       }
     } catch (error) {
-      console.error("Error updating category:", error.message);
       toast.error("An unexpected error occurred", {
         position: "top-right",
         autoClose: 2500,
@@ -278,53 +300,43 @@ const Category = () => {
         </ul>
       </section>
 
-      {/* Modal for editing */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg space-y-4">
-            <h3 className="text-lg font-bold">Edit Category</h3>
-            <form onSubmit={handleUpdateCategory}>
-              <div className="flex flex-col space-y-3">
-                <label className="text-primary font-medium">
-                  Category Name
-                </label>
-                <input
-                  type="text"
-                  name="categoryName"
-                  value={categoryInput.categoryName}
-                  onChange={handleCategoryInput}
-                  className="w-full border border-gray-300 p-2 rounded"
-                />
-              </div>
-              <div className="flex flex-col space-y-3">
-                <label className="text-primary font-medium">Slug</label>
-                <input
-                  type="text"
-                  name="slug"
-                  value={categoryInput.slug}
-                  onChange={handleCategoryInput}
-                  className="w-full border border-gray-300 p-2 rounded"
-                />
-              </div>
-              <div className="flex justify-end space-x-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-gray-300 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded"
-                >
-                  Update
-                </button>
-              </div>
-            </form>
+      {/* modal for update category */}
+      <EditCategoryModal
+        isOpen={isModalOpen}
+        title="Edit Category"
+        onClose={() => setIsModalOpen(false)}
+      >
+        <form onSubmit={handleUpdateCategory}>
+          <div className="flex flex-col space-y-3">
+            <label className="text-primary font-medium">Category Name</label>
+            <input
+              type="text"
+              name="categoryName"
+              value={categoryInput.categoryName}
+              onChange={handleCategoryInput}
+              className="w-full border border-gray-300 p-2 rounded"
+            />
           </div>
-        </div>
-      )}
+          <div className="flex flex-col space-y-3">
+            <label className="text-primary font-medium">Slug</label>
+            <input
+              type="text"
+              name="slug"
+              value={categoryInput.slug}
+              onChange={handleCategoryInput}
+              className="w-full border border-gray-300 p-2 rounded"
+            />
+          </div>
+          <div className="flex items-center justify-end pt-3">
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-600"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </EditCategoryModal>
     </main>
   );
 };
